@@ -1,0 +1,127 @@
+/* ---------- Full page styling ---------- */
+/* #region */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;800&display=swap");
+
+* {
+	font-family: "Montserrat", Verdana, Geneva, Tahoma, sans-serif;
+	color: var(--text_primary);
+	scroll-behavior: smooth;
+	font-weight: 500;
+}
+
+:root {
+	--margin_s: 1vmin;
+
+	/* Text sizes, large to small */
+	--text_size_0: 2vw;
+	--text_size_1: 2vw;
+	--text_size_2: 2vw;
+	--text_size_3: 2vw;
+	--text_size_4: 0.8vw;
+}
+
+:root[data-theme="light"] {
+	--text_primary: #000000;
+	--background_elevation_0: rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="medium"] {
+	--text_primary: #e0e0e0;
+	--background_elevation_0: rgba(0, 0, 0, 0.452);
+}
+
+:root[data-theme="dark"] {
+	--text_primary: #bdbdbd;
+	--background_elevation_0: rgba(0, 0, 0, 0.932);
+}
+
+body {
+	overflow: hidden;
+	margin: var(--margin_s);
+	transition: background-color 1s;
+}
+/* #endregion */
+
+
+
+/* ---------- Fullscreen container ---------- */
+/* #region */
+#fullscreen_container {
+	overflow: hidden;
+	width: calc(100vw - (2 * var(--margin_s)));
+	height: calc(100vh - (2 * var(--margin_s)));
+	transition: transform 1s;
+
+	display: flex;
+	align-content: space-between;
+}
+/* #endregion */
+
+
+
+/* ---------- Navbar ---------- */
+/* #region */
+#navbar_container {
+	width: 25%;
+	overflow-y: scroll;
+	display: flex;
+	flex-direction: column;
+
+	background-color: var(--background_elevation_0);
+	transition: background-color 0.25s;
+}
+
+#navbar_top {
+	display: flex;
+	justify-content: space-between;
+}
+
+#navbar_logo_container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+#navbar_logo_short {
+	font-size: var(--text_size_0);
+	font-weight: 800;
+}
+/* #endregion */
+
+
+
+/* ---------- Content ---------- */
+/* #region */
+#content_container {
+	width: 50%;
+	margin: 0 var(--margin_s);
+	overflow-y: scroll;
+
+	background-color: rgba(0, 0, 0, 0.1);
+}
+/* #endregion */
+
+
+
+/* ---------- Feed ---------- */
+/* #region */
+#feed_container {
+	width: 25%;
+	overflow-y: scroll;
+
+	background-color: rgba(0, 0, 0, 0.1);
+}
+/* #endregion */
+
+
+
+/* ---------- Screen width responsiveness ---------- */
+/* #region */
+/* Narrow screen, hide feed and make it a selectable option */
+/* @media (max-aspect-ratio: 1.35) {
+} */
+
+/* Mobile screen, additionally hide the navbar */
+/* @media (max-aspect-ratio: 0.9) {
+} */
+/* #endregion */
