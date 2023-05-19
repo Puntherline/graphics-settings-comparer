@@ -22,23 +22,17 @@
 
 :root[data-theme="light"] {
 	--text_primary: #000000;
-	--background_elevation_0: rgba(0, 0, 0, 0.1);
-}
-
-:root[data-theme="medium"] {
-	--text_primary: #e0e0e0;
-	--background_elevation_0: rgba(0, 0, 0, 0.452);
+	--background_elevation_0: #ffffff;
 }
 
 :root[data-theme="dark"] {
 	--text_primary: #bdbdbd;
-	--background_elevation_0: rgba(0, 0, 0, 0.932);
+	--background_elevation_0: #121212;
 }
 
 body {
 	overflow: hidden;
 	margin: var(--margin_s);
-	transition: background-color 1s;
 }
 /* #endregion */
 
@@ -50,7 +44,6 @@ body {
 	overflow: hidden;
 	width: calc(100vw - (2 * var(--margin_s)));
 	height: calc(100vh - (2 * var(--margin_s)));
-	transition: transform 1s;
 
 	display: flex;
 	align-content: space-between;
@@ -68,7 +61,6 @@ body {
 	flex-direction: column;
 
 	background-color: var(--background_elevation_0);
-	transition: background-color 0.25s;
 }
 
 #navbar_top {

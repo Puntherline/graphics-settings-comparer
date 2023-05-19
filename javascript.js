@@ -6,10 +6,11 @@
 
 // ---------- Variables ----------
 // #region
-var current_theme = "medium";
-var valid_pages = [
-	"main_page"
-];
+var current_theme = "dark";
+
+var current_page_request;
+var current_page = "main_page";
+var cached_pages = {};
 // #endregion
 
 
@@ -18,63 +19,100 @@ var valid_pages = [
 // #region
 function setPreferredUserTheme(startup) { // Setting the preferred user theme
 	var new_theme;
-	var valid_themes = ["light", "medium", "dark"];
 
-	// Just loaded the page
+	// Page just loaded, try getting preferred theme
 	if (startup) {
 
-		// Attempt loading from local storage
+		// Try loading via local storage first, also clear storage if neither light nor dark
 		try {
-			new_theme = JSON.parse(localStorage.getItem("graphics-settings-comparer")).theme;
-			if (!valid_themes.includes(new_theme)) throw new Error();
+			var local_storage_theme = JSON.parse(localStorage.getItem("graphics-settings-comparer")).theme;
+			if (local_storage_theme !== "light" && local_storage_theme !== "dark") {
+				localStorage.removeItem("graphics-settings-comparer");
+			} else {
+				new_theme = local_storage_theme;
+			}
 		} catch {}
 
-		// If no result yet, attempt loading from matchMedia color scheme preferences
+		// If not defined yet, try via match media
 		if (!new_theme) {
 			try {
-				new_theme = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "medium";
+				var os_theme = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+				new_theme = os_theme;
 			} catch {}
 		}
 
-		// If still not set yet, use medium as a default
-		if (!new_theme) new_theme = "medium";
+		// Still not defined yet, maybe compatibility issue, set to dark
+		if (!new_theme) new_theme = "dark";
 
-	// Button to switch to next theme clicked - Use next theme
+	// Change was requested manually
 	} else {
-		var next_theme = valid_themes.indexOf(current_theme);
-		if (next_theme !== -1) {
-			next_theme++;
-			if (next_theme > 2) next_theme = 0;
-		}
-		new_theme = valid_themes[next_theme];
+		new_theme = new_theme.includes("dark") ? "light" : "dark";
 	}
 
-	// Theme changed - Update and save
+	// Theme changed - Update and save (save if not default)
 	if (new_theme !== current_theme) {
-		localStorage.setItem("graphics-settings-comparer", JSON.stringify({theme: new_theme}));
+		if (new_theme === "dark") {
+			localStorage.removeItem("graphics-settings-comparer");
+		} else {
+			localStorage.setItem("graphics-settings-comparer", JSON.stringify({theme: new_theme}));
+		}
 		document.documentElement.dataset.theme = new_theme;
 		current_theme = new_theme;
 	}
 }
 
-function loadPage(page) { // Loading specified page
+function generatePage(page) { // Generate and present page from json file
+	// If "page" is an object, generate a page
+	// If "page" is a string, it's already been generated and cached,
+	// meaning I can just skip everything and set the contents' inner
+	// HTML to the string.
+}
+
+function loadPageJson(page) { // Loading specified page
 
 	// Variables
 	var params_page = new URL(document.location).searchParams.get("page");
-	var target_page = page || params_page || "main_page";
+	var target_page = page || params_page;
 
-	// Todo: Using XMLHttpRequest for the individual jsonc files.
+	// Abort if no page was specified
+	if (!target_page) return;
 
-	// Example:
-	// const request = new XMLHttpRequest();
-	// request.open("GET", `/graphics-settings-comparer/${target_page}.jsonc`);
-	// request.send();
+	// Abort previous request if it was running
+	if (current_page_request) current_page_request.abort();
 
-	// Also:
-	// - Needs handlers for aborting
-	// - Needs handlers for failed fetching
-	// - Needs handlers for manually aborting if another page was requested instead
-	// - Needs a check if the page exists, if not then present 404 page
+	// Check if we already have the target page cached
+	if (cached_pages[target_page]) {
+		generatePage(cached_pages[target_page]);
+	} else {
+
+		// Specify path to json
+		current_page_request = new XMLHttpRequest();
+		current_page_request.open("GET", `/graphics-settings-comparer/games/${target_page}/page.json`);
+
+		// Handling anything that could go wrong (Do I need "error" and "abort" with "readystatechange"?)
+		current_page_request.addEventListener("error", () => current_page_request = undefined);
+		current_page_request.addEventListener("abort", () => current_page_request = undefined);
+		current_page_request.addEventListener("readystatechange", () => {
+			if (current_page_request.readyState === XMLHttpRequest.DONE) {
+				const status = current_page_request.status;
+				if (status === 0 || (status >= 200 && status < 400)) {
+					try {
+						var parsed = JSON.parse(current_page_request.responseText);
+						generatePage(parsed);
+					} catch {
+						// Todo: Show error notification (JSON file with wrong format?)
+					}
+					current_page_request = undefined;
+				} else {
+					// Todo: Show error notification (Request failed - Maybe a list of common statuses and solutions?)
+					current_page_request = undefined;
+				}
+			}
+		});
+
+		// Sending the request
+		current_page_request.send();
+	}
 }
 // #endregion
 
@@ -83,14 +121,15 @@ function loadPage(page) { // Loading specified page
 // #region
 window.addEventListener("DOMContentLoaded", () => { // On page load
 
-	// Set website theme: Local storage > Preferred via OS > Use default (Medium)
+	// Set website theme: Local storage > Preferred via OS > Use default (dark)
 	setPreferredUserTheme(true);
 
-	// Get and load target page or default if unspecified
-	loadPage();
-
-	// Once all is done, present page
-	document.getElementById("fullscreen_container").removeAttribute("style");
-	document.body.removeAttribute("style");
+	// Get and load target page if specified
+	loadPageJson();
 });
+
+// Temporary mockup
+test_button.addEventListener("click", () => {
+	loadPageJson("grand-theft-auto-v");
+})
 // #endregion
