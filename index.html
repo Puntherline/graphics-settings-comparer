@@ -17,7 +17,7 @@
 	</head>
 
 	<!-- Fullscreen container - Black on initial load -->
-	<body>
+	<body style="background-color: var(--background_elevation_0);">
 
 		<!-- Fullscreen container - Hidden on initial load -->
 		<div id="fullscreen_container">
@@ -31,23 +31,25 @@
 			<!-- Navbar -->
 			<div id="navbar_container">
 
-				<!-- Logo and theme switch button -->
+				<!-- Logo -->
 				<div id="navbar_top">
-					<span>Placeholder</span>
-					<div id="navbar_logo_container">
-						<span id="navbar_logo_short">G S C</span>
-						<span id="navbar_logo_long">Graphics Settings Comparer</span>
-					</div>
-					<span id="navbar_theme_toggle">Placeholder</span>
-				</div>
+					<span id="navbar_logo_short">G S C</span>
+					<span id="navbar_logo_long">Graphics Settings Comparer</span>
+				</div><hr>
 
 				<!-- Items of the navbar -->
 				<div id="navbar_center">
+
+					<!-- Games button -->
 					<div class="navbar_item">
-						<span class="navbar_icon">Icon</span>
-						<div class="navbar_item_text">
-							<p>Text here</p>
-						</div>
+						<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_games.svg">
+						<span class="navbar_item_text">Games</span>
+					</div>
+
+					<!-- Settings button -->
+					<div class="navbar_item">
+						<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_cogwheel.svg">
+						<span class="navbar_item_text">Settings</span>
 					</div>
 				</div>
 
