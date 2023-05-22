@@ -117,6 +117,7 @@ function loadPageJson(page) { // Loading specified page
 // #endregion
 
 
+
 // ---------- Event listeners ----------
 // #region
 window.addEventListener("DOMContentLoaded", () => { // On page load
