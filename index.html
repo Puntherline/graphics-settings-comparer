@@ -32,37 +32,84 @@
 			<div id="navbar_container">
 
 				<!-- Logo -->
-				<div id="navbar_top">
-					<span id="navbar_logo_short">G S C</span>
-					<span id="navbar_logo_long">Graphics Settings Comparer</span>
+				<div class="navbar_top">
+					<span class="navbar_logo_short">G S C</span>
+					<span class="navbar_logo_long">Graphics Settings Comparer</span>
 				</div><hr>
 
 				<!-- Items of the navbar -->
 				<div id="navbar_center">
 
 					<!-- Games button -->
-					<div class="navbar_item">
-						<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_games.svg">
-						<span class="navbar_item_text">Games</span>
+					<div class="navbar_item_container proximity_glow_effect">
+						<div class="navbar_item">
+							<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_games.svg">
+							<p class="navbar_item_text">Games</p>
+						</div>
+					</div>
+
+					<!-- Request Game button -->
+					<div class="navbar_item_container proximity_glow_effect">
+						<div class="navbar_item">
+							<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_request_game.svg">
+							<p class="navbar_item_text">Request Game</p>
+						</div>
+					</div>
+
+					<!-- Report Issue button -->
+					<div class="navbar_item_container proximity_glow_effect">
+						<div class="navbar_item">
+							<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_report_issue.svg">
+							<p class="navbar_item_text">Report Issue</p>
+						</div>
+					</div>
+
+					<!-- Contribute button -->
+					<div class="navbar_item_container proximity_glow_effect">
+						<div class="navbar_item">
+							<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_contribute.svg">
+							<p class="navbar_item_text">Contribute</p>
+						</div>
+					</div>
+
+					<!-- Feed button (mobile only) -->
+					<div class="navbar_item_container proximity_glow_effect hidden_when_landscape">
+						<div class="navbar_item">
+							<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_feed.svg">
+							<p class="navbar_item_text">Feed</p>
+						</div>
 					</div>
 
 					<!-- Settings button -->
-					<div class="navbar_item">
-						<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_cogwheel.svg">
-						<span class="navbar_item_text">Settings</span>
+					<div class="navbar_item_container proximity_glow_effect">
+						<div class="navbar_item">
+							<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_cogwheel.svg">
+							<p class="navbar_item_text">Settings</p>
+						</div>
 					</div>
 				</div>
 
 				<!-- Copyright notice at the bottom -->
-				<div id="navbar_bottom">
-					<p>Copyright (c) 2023 Puntherline.</p>
-				</div>
+				<div id="navbar_bottom">Copyright (c) 2023 Puntherline.</div>
 			</div>
 
 			<!-- Content -->
-			<div id="content_container">
-				content container here
-				<button id="test_button">load gtav</button> <!-- Temporary mockup -->
+			<div id="content_container_mobile">
+
+				<!-- Header - Mobile only -->
+				<div id="mobile_header">
+					<img class="mobile_navbar_toggle" src="/graphics-settings-comparer/media/icon_hamburgermenu.svg">
+					<div class="navbar_top">
+						<span class="navbar_logo_short">G S C</span>
+						<span class="navbar_logo_long">Graphics Settings Comparer</span>
+					</div>
+				</div>
+
+				<!-- Actual content -->
+				<div id="content_container">
+					content container here
+					<button id="test_button">load gtav</button> <!-- Temporary mockup -->
+				</div>
 			</div>
 
 			<!-- Feed -->
