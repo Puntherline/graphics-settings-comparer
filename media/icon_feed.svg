@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+  <path style="stroke: rgb(0, 0, 0); fill: none; stroke-width: 5px; stroke-linejoin: round; stroke-linecap: round;" d="M 14.265 13.974 L 75.598 14.154 L 75.688 59.475 C 75.546 62.189 72.978 65.718 70.079 65.808 L 9.109 65.808 C 6.771 65.895 4.438 63.489 4.495 60.742 L 4.585 25.824 L 14.264 25.733 L 14.265 13.974 Z"/>
+  <path style="stroke: rgb(0, 0, 0); stroke-width: 5px; stroke-linejoin: round; stroke-linecap: round; fill: none;" d="M 14.265 24.829 L 14.445 60.832 C 14.436 64.169 12.568 65.739 9.65 65.807"/>
+  <rect x="25.392" y="25.19" width="14.926" height="10.314" style="stroke: rgb(0, 0, 0); stroke-linejoin: round; stroke-linecap: round; stroke-width: 4px;"/>
+  <line style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); stroke-width: 5px; stroke-linecap: round;" x1="49.544" y1="25.552" x2="65.375" y2="25.552"/>
+  <line style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); stroke-width: 5px; stroke-linecap: round;" x1="49.635" y1="35.141" x2="65.647" y2="35.051"/>
+  <line style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); stroke-width: 5px; stroke-linecap: round;" x1="24.849" y1="44.549" x2="65.285" y2="44.549"/>
+  <line style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); stroke-width: 5px; stroke-linecap: round;" x1="24.577" y1="54.048" x2="65.104" y2="53.957"/>
+</svg>
