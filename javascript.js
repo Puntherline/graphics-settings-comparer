@@ -103,11 +103,11 @@ function loadPageJson(page) { // Loading specified page
 	var params_page = new URL(document.location).searchParams.get("page");
 	var target_page = page || params_page;
 
-	// Abort if no page was specified
-	if (!target_page) return;
-
 	// Abort if current page is target page
 	if (target_page === current_page) return;
+
+	// No page was specified, meaning load main page
+	if (!target_page) target_page = "main_page";
 
 	// Abort previous request if it was running
 	if (current_page_request) current_page_request.abort();
@@ -161,28 +161,28 @@ window.addEventListener("DOMContentLoaded", () => { // On page load
 
 	// Get and load target page if specified
 	loadPageJson();
-});
 
-// Glow effect around elements
-document.documentElement.addEventListener("mousemove", (e) => {
-	var elems = document.querySelectorAll(".proximity_glow_effect");
-	for (i = 0; i < elems.length; i++) {
-		var rect = elems[i].getBoundingClientRect();
-		var x = e.clientX - rect.left;
-		var y = e.clientY - rect.top;
-		elems[i].style.setProperty("--x", x + "px");
-		elems[i].style.setProperty("--y", y + "px");
-	}
-});
+	// Glow effect around elements
+	document.documentElement.addEventListener("mousemove", (e) => {
+		var elems = document.querySelectorAll(".proximity_glow_effect");
+		for (i = 0; i < elems.length; i++) {
+			var rect = elems[i].getBoundingClientRect();
+			var x = e.clientX - rect.left;
+			var y = e.clientY - rect.top;
+			elems[i].style.setProperty("--x", x + "px");
+			elems[i].style.setProperty("--y", y + "px");
+		}
+	});
 
-// Clicking or tapping navbar toggle button
-navbar_toggle_btn.addEventListener("click", toggleNavbarVisibility);
+	// Clicking or tapping navbar toggle button
+	navbar_toggle_btn.addEventListener("click", toggleNavbarVisibility);
 
-// Clicking logos to go home
-for (i = 0; i < logos.length; i++) logos[i].addEventListener("click", loadPageJson("main_page"));
+	// Clicking logos to go home
+	for (i = 0; i < logos.length; i++) logos[i].addEventListener("click", loadPageJson("main_page"));
 
-// Temporary mockup
-test_button.addEventListener("click", () => {
-	loadPageJson("grand-theft-auto-v");
+	// Temporary mockup
+	test_button.addEventListener("click", () => {
+		loadPageJson("grand-theft-auto-v");
+	});
 });
 // #endregion
