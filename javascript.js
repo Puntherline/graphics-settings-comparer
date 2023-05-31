@@ -1,5 +1,9 @@
 // ---------- Elements ----------
 // #region
+var navbar_container = document.getElementById("navbar_container");
+var navbar_toggle_btn = document.querySelector(".portrait_navbar_toggle");
+var logos = document.getElementsByClassName("logo");
+var content_element = document.getElementById("content");
 // #endregion
 
 
@@ -10,13 +14,32 @@ var current_theme = "dark";
 
 var current_page_request;
 var current_page = "main_page";
-var cached_pages = {};
+var cached_pages = {
+	main_page: `
+		<p style="font-size: var(--text_size_0);">Text Size 0</p>
+		<p style="font-size: var(--text_size_1);">Text Size 1</p>
+		<p style="font-size: var(--text_size_2);">Text Size 2</p>
+		<p style="font-size: var(--text_size_3);">Text Size 3</p>
+		<p style="font-size: var(--text_size_4);">Text Size 4</p>
+		<button id="test_button">load gtav</button>
+	`
+};
+
+var navbar_visible = false;
 // #endregion
 
 
 
 // ---------- Functions ----------
 // #region
+function toggleNavbarVisibility() { // Toggle navbar visible or hidden
+	navbar_container.style.transition = "transform .5s";
+	navbar_container.classList.toggle("show_navbar_portrait");
+	setTimeout(function() {
+		navbar_container.removeAttribute("style");
+	}, 600);
+}
+
 function setPreferredUserTheme(startup) { // Setting the preferred user theme
 	var new_theme;
 
@@ -62,10 +85,16 @@ function setPreferredUserTheme(startup) { // Setting the preferred user theme
 }
 
 function generatePage(page) { // Generate and present page from json file
-	// If "page" is an object, generate a page
-	// If "page" is a string, it's already been generated and cached,
-	// meaning I can just skip everything and set the contents' inner
-	// HTML to the string.
+	var page_type = typeof(page);
+	var page_code;
+
+	// Generate code if page type is object
+	if (page_type === "object") {
+		page_code = "todo";
+	}
+
+	// Set contents' inner html to generated or cached code
+	content_element.innerHTML = page_code || page;
 }
 
 function loadPageJson(page) { // Loading specified page
@@ -77,11 +106,15 @@ function loadPageJson(page) { // Loading specified page
 	// Abort if no page was specified
 	if (!target_page) return;
 
+	// Abort if current page is target page
+	if (target_page === current_page) return;
+
 	// Abort previous request if it was running
 	if (current_page_request) current_page_request.abort();
 
 	// Check if we already have the target page cached
 	if (cached_pages[target_page]) {
+		current_page = target_page;
 		generatePage(cached_pages[target_page]);
 	} else {
 
@@ -98,6 +131,7 @@ function loadPageJson(page) { // Loading specified page
 				if (status === 0 || (status >= 200 && status < 400)) {
 					try {
 						var parsed = JSON.parse(current_page_request.responseText);
+						current_page = target_page;
 						generatePage(parsed);
 					} catch {
 						// Todo: Show error notification (JSON file with wrong format?)
@@ -140,6 +174,12 @@ document.documentElement.addEventListener("mousemove", (e) => {
 		elems[i].style.setProperty("--y", y + "px");
 	}
 });
+
+// Clicking or tapping navbar toggle button
+navbar_toggle_btn.addEventListener("click", toggleNavbarVisibility);
+
+// Clicking logos to go home
+for (i = 0; i < logos.length; i++) logos[i].addEventListener("click", loadPageJson("main_page"));
 
 // Temporary mockup
 test_button.addEventListener("click", () => {
