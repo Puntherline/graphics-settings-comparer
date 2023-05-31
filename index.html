@@ -16,23 +16,20 @@
 		<meta property="og:url" content="https://puntherline.github.io/graphics-settings-comparer/">
 	</head>
 
-	<!-- Fullscreen container - Black on initial load -->
-	<body style="background-color: var(--background_elevation_0);">
+	<body>
 
-		<!-- Fullscreen container - Hidden on initial load -->
+		<!-- Fullscreen container -->
 		<div id="fullscreen_container">
 
 			<!-- Todo: Modal here -->
 
-			<!-- Todo: Settings menu here -->
-
 			<!-- Todo: Notifications here -->
 
-			<!-- Navbar -->
+			<!-- Left part (navbar) -->
 			<div id="navbar_container">
 
 				<!-- Logo -->
-				<div class="navbar_top">
+				<div class="navbar_top logo">
 					<span class="navbar_logo_short">G S C</span>
 					<span class="navbar_logo_long">Graphics Settings Comparer</span>
 				</div><hr>
@@ -72,7 +69,7 @@
 						</div>
 					</div>
 
-					<!-- Feed button (mobile only) -->
+					<!-- Feed button (portrait and square only) -->
 					<div class="navbar_item_container proximity_glow_effect hidden_when_landscape">
 						<div class="navbar_item">
 							<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_feed.svg">
@@ -93,23 +90,20 @@
 				<div id="navbar_bottom">Copyright (c) 2023 Puntherline.</div>
 			</div>
 
-			<!-- Content -->
-			<div id="content_container_mobile">
+			<!-- Center part -->
+			<div id="content_container">
 
-				<!-- Header - Mobile only -->
-				<div id="mobile_header">
-					<img class="mobile_navbar_toggle" src="/graphics-settings-comparer/media/icon_hamburgermenu.svg">
-					<div class="navbar_top">
-						<span class="navbar_logo_short">G S C</span>
+				<!-- Navbar toggle and logo (portrait screen only) -->
+				<div id="portrait_above_content">
+					<img class="portrait_navbar_toggle" src="/graphics-settings-comparer/media/icon_hamburgermenu.svg">
+					<div id="portrait_logo" class="logo">
+						<span class="navbar_logo_short">G S C</span><br>
 						<span class="navbar_logo_long">Graphics Settings Comparer</span>
 					</div>
 				</div>
 
-				<!-- Actual content -->
-				<div id="content_container">
-					content container here
-					<button id="test_button">load gtav</button> <!-- Temporary mockup -->
-				</div>
+				<!-- Content -->
+				<div id="content"></div>
 			</div>
 
 			<!-- Feed -->
