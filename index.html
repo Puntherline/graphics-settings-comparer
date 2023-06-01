@@ -29,7 +29,7 @@
 			<div id="navbar_container">
 
 				<!-- Logo -->
-				<div class="navbar_top logo">
+				<div target_page="page_main" class="navbar_top logo">
 					<span class="navbar_logo_short">G S C</span>
 					<span class="navbar_logo_long">Graphics Settings Comparer</span>
 				</div><hr>
@@ -38,7 +38,7 @@
 				<div id="navbar_center">
 
 					<!-- Games button -->
-					<div class="navbar_item_container proximity_glow_effect">
+					<div target_page="page_games" class="navbar_item_container proximity_glow_effect">
 						<div class="navbar_item">
 							<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_games.svg">
 							<p class="navbar_item_text">Games</p>
@@ -46,7 +46,7 @@
 					</div>
 
 					<!-- Request Game button -->
-					<div class="navbar_item_container proximity_glow_effect">
+					<div target_page="page_request-game" class="navbar_item_container proximity_glow_effect">
 						<div class="navbar_item">
 							<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_request_game.svg">
 							<p class="navbar_item_text">Request Game</p>
@@ -54,7 +54,7 @@
 					</div>
 
 					<!-- Report Issue button -->
-					<div class="navbar_item_container proximity_glow_effect">
+					<div target_page="page_report-issue" class="navbar_item_container proximity_glow_effect">
 						<div class="navbar_item">
 							<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_report_issue.svg">
 							<p class="navbar_item_text">Report Issue</p>
@@ -62,7 +62,7 @@
 					</div>
 
 					<!-- Contribute button -->
-					<div class="navbar_item_container proximity_glow_effect">
+					<div target_page="page_contribute" class="navbar_item_container proximity_glow_effect">
 						<div class="navbar_item">
 							<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_contribute.svg">
 							<p class="navbar_item_text">Contribute</p>
@@ -70,7 +70,7 @@
 					</div>
 
 					<!-- Feed button (portrait and square only) -->
-					<div class="navbar_item_container proximity_glow_effect hidden_when_landscape">
+					<div target_page="page_feed" class="navbar_item_container proximity_glow_effect hidden_when_landscape">
 						<div class="navbar_item">
 							<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_feed.svg">
 							<p class="navbar_item_text">Feed</p>
@@ -78,7 +78,7 @@
 					</div>
 
 					<!-- Settings button -->
-					<div class="navbar_item_container proximity_glow_effect">
+					<div target_page="page_settings" class="navbar_item_container proximity_glow_effect">
 						<div class="navbar_item">
 							<img class="navbar_icon" src="/graphics-settings-comparer/media/icon_cogwheel.svg">
 							<p class="navbar_item_text">Settings</p>
@@ -130,7 +130,7 @@
 				<div id="page_error" class="content page_hidden">error here</div>
 			</div>
 
-			<!-- Feed -->
+			<!-- Feed (landscape only - Copies from #page_feed) -->
 			<div id="feed_container"></div>
 		</div>
 		<script src="/graphics-settings-comparer/javascript.js"></script>
@@ -143,11 +143,5 @@ Quick to-do list cause I'll forget otherwise, not ordered
 - Finish generatePage()'s code generation
 - Make generatePage()'s scrolling after code generation work
 - Add some very basic content to all .content pages
-- Figure out a way to switch feed with content when no in landscape and feed was clicked
 - Close navbar in portrait automatically when button was clicked
-
-Actually already got an idea how to handle the feed:
-Only when landscape, copy #page_feed's inner html into #feed_container.
-Or, just copy it by default on startup. Should work fine with no real
-computational losses I think.
 -->
