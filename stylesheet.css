@@ -11,20 +11,21 @@
 
 :root {
 	/* Gets set higher when switching layouts */
-	--size_multiplier: 1;
+	--scale_mult: 1;
+	--custom_scale_mult: 0;
 
 	/* Margins, spacing, misc stuff */
-	--margin_s: calc(0.5vmin * var(--size_multiplier));
-	--margin_m: calc(1vmin * var(--size_multiplier));
-	--margin_l: calc(2vmin * var(--size_multiplier));
-	--border_thickness: calc(0.33vmin * var(--size_multiplier));
+	--margin_s: calc(0.5vmin * (var(--scale_mult) + var(--custom_scale_mult)));
+	--margin_m: calc(1vmin * (var(--scale_mult) + var(--custom_scale_mult)));
+	--margin_l: calc(2vmin * (var(--scale_mult) + var(--custom_scale_mult)));
+	--border_thickness: calc(0.33vmin * (var(--scale_mult) + var(--custom_scale_mult)));
 
 	/* Text sizes, large to small */
-	--text_size_0: calc(1.9vw * var(--size_multiplier));
-	--text_size_1: calc(1.6vw * var(--size_multiplier));
-	--text_size_2: calc(1.2vw * var(--size_multiplier));
-	--text_size_3: calc(0.9vw * var(--size_multiplier));
-	--text_size_4: calc(0.7vw * var(--size_multiplier));
+	--text_size_0: calc(1.9vw * (var(--scale_mult) + var(--custom_scale_mult)));
+	--text_size_1: calc(1.6vw * (var(--scale_mult) + var(--custom_scale_mult)));
+	--text_size_2: calc(1.2vw * (var(--scale_mult) + var(--custom_scale_mult)));
+	--text_size_3: calc(0.9vw * (var(--scale_mult) + var(--custom_scale_mult)));
+	--text_size_4: calc(0.7vw * (var(--scale_mult) + var(--custom_scale_mult)));
 }
 
 :root[data-theme="light"] {
@@ -221,10 +222,15 @@ hr {
 	width: 100%;
 }
 
-#content {
+.content {
 	height: 100%;
 	overflow-y: scroll;
 	background-color: var(--background_elevation_1);
+	padding: var(--margin_m);
+}
+
+.page_hidden {
+	display: none;
 }
 /* #endregion */
 
@@ -234,6 +240,7 @@ hr {
 /* #region */
 #feed_container {
 	width: 23%;
+	padding: var(--margin_m);
 	overflow-y: scroll;
 	background-color: var(--background_elevation_1);
 }
@@ -247,7 +254,7 @@ hr {
 @media (max-aspect-ratio: 1.35) {
 	/* Increase scaling */
 	:root {
-		--size_multiplier: 1.4;
+		--scale_mult: 1.4;
 	}
 
 	/* Hide dedicated feed portion */
@@ -276,7 +283,7 @@ hr {
 @media (max-aspect-ratio: 0.9) {
 	/* Increase scaling */
 	:root {
-		--size_multiplier: 2.9;
+		--scale_mult: 2.9;
 	}
 
 	/* Hide navbar */
