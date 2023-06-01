@@ -102,15 +102,52 @@
 					</div>
 				</div>
 
-				<!-- Content -->
-				<div id="content"></div>
+				<!-- Main Page -->
+				<div id="page_main" class="content page_hidden">main</div>
+
+				<!-- Games Page -->
+				<div id="page_games" class="content page_hidden">games</div>
+
+				<!-- Request Game Page -->
+				<div id="page_request-game" class="content page_hidden">request_game</div>
+
+				<!-- Report Issue Page -->
+				<div id="page_report-issue" class="content page_hidden">report_issue</div>
+
+				<!-- Contribute Page -->
+				<div id="page_contribute" class="content page_hidden">contribute</div>
+
+				<!-- Feed Page -->
+				<div id="page_feed" class="content page_hidden">feed</div>
+
+				<!-- Settings Page -->
+				<div id="page_settings" class="content page_hidden">settings</div>
+
+				<!-- Custom Page -->
+				<div id="page_custom" class="content page_hidden">custom</div>
+
+				<!-- Error Page -->
+				<div id="page_error" class="content page_hidden">error here</div>
 			</div>
 
 			<!-- Feed -->
-			<div id="feed_container">
-				feed container here
-			</div>
+			<div id="feed_container"></div>
 		</div>
 		<script src="/graphics-settings-comparer/javascript.js"></script>
 	</body>
 </html>
+
+<!--
+Quick to-do list cause I'll forget otherwise, not ordered
+- Decide on the content for json files
+- Finish generatePage()'s code generation
+- Make generatePage()'s scrolling after code generation work
+- Add some very basic content to all .content pages
+- Figure out a way to switch feed with content when no in landscape and feed was clicked
+- Close navbar in portrait automatically when button was clicked
+
+Actually already got an idea how to handle the feed:
+Only when landscape, copy #page_feed's inner html into #feed_container.
+Or, just copy it by default on startup. Should work fine with no real
+computational losses I think.
+-->
