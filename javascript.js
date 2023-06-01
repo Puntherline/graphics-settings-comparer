@@ -3,7 +3,7 @@
 var navbar_container = document.getElementById("navbar_container");
 var navbar_toggle_btn = document.querySelector(".portrait_navbar_toggle");
 var logos = document.getElementsByClassName("logo");
-var content_element = document.getElementById("content");
+var navbar_buttons = document.querySelectorAll(".navbar_item_container");
 // #endregion
 
 
@@ -13,19 +13,10 @@ var content_element = document.getElementById("content");
 var current_theme = "dark";
 
 var current_page_request;
-var current_page = "main_page";
-var cached_pages = {
-	main_page: `
-		<p style="font-size: var(--text_size_0);">Text Size 0</p>
-		<p style="font-size: var(--text_size_1);">Text Size 1</p>
-		<p style="font-size: var(--text_size_2);">Text Size 2</p>
-		<p style="font-size: var(--text_size_3);">Text Size 3</p>
-		<p style="font-size: var(--text_size_4);">Text Size 4</p>
-		<button id="test_button">load gtav</button>
-	`
-};
+var current_page;
 
 var navbar_visible = false;
+var cached_games = {};
 // #endregion
 
 
@@ -84,43 +75,58 @@ function setPreferredUserTheme(startup) { // Setting the preferred user theme
 	}
 }
 
-function generatePage(page) { // Generate and present page from json file
-	var page_type = typeof(page);
-	var page_code;
-
-	// Generate code if page type is object
-	if (page_type === "object") {
-		page_code = "todo";
-	}
-
-	// Set contents' inner html to generated or cached code
-	content_element.innerHTML = page_code || page;
-}
-
-function loadPageJson(page) { // Loading specified page
+function generatePage(page, hash) { // Generate and present page from json file, scroll to hash if present
 
 	// Variables
-	var params_page = new URL(document.location).searchParams.get("page");
-	var target_page = page || params_page;
+	var code;
 
-	// Abort if current page is target page
-	if (target_page === current_page) return;
+	// Temporary placeholder
+	code = `
+		<p>
+			Game ID: ${page.id}<br>
+			Label: ${page.label}<br>
+			Description: ${page.description}
+		</p>
+	`;
 
-	// No page was specified, meaning load main page
-	if (!target_page) target_page = "main_page";
+	// Set contents' inner html to generated code and save in cache variable
+	current_page.innerHTML = code;
+	cached_games[page.id] = code;
+
+	// Todo: Scroll to wherever `hash` is if it exists
+}
+
+function loadGameJson(game, hash) { // Loading from cache or json file
 
 	// Abort previous request if it was running
 	if (current_page_request) current_page_request.abort();
 
 	// Check if we already have the target page cached
-	if (cached_pages[target_page]) {
-		current_page = target_page;
-		generatePage(cached_pages[target_page]);
+	if (cached_games[game]) {
+
+		// Hide previous page if required
+		if (current_page) {
+			if (current_page.id !== "page_custom") {
+				current_page.classList.add("page_hidden");
+				current_page = document.getElementById("page_custom");
+				current_page.classList.remove("page_hidden");
+			}
+		} else {
+			current_page = document.getElementById("page_custom");
+			current_page.classList.remove("page_hidden");
+		}
+
+		// Set custom pages' inner HTML to cached data
+		document.getElementById("page_custom").innerHTML = cached_games[game];
+
+		// Update URL (Cached, meaning clicked manually, so we skip the hash)
+		var new_url = `${window.location.pathname}?page=${game}`;
+		history.pushState(null, "", new_url);
 	} else {
 
 		// Specify path to json
 		current_page_request = new XMLHttpRequest();
-		current_page_request.open("GET", `/graphics-settings-comparer/games/${target_page}/page.json`);
+		current_page_request.open("GET", `/graphics-settings-comparer/games/${game}/page.json`);
 
 		// Handling anything that could go wrong (Do I need "error" and "abort" with "readystatechange"?)
 		current_page_request.addEventListener("error", () => current_page_request = undefined);
@@ -129,16 +135,66 @@ function loadPageJson(page) { // Loading specified page
 			if (current_page_request.readyState === XMLHttpRequest.DONE) {
 				const status = current_page_request.status;
 				if (status === 0 || (status >= 200 && status < 400)) {
+
+					// Attempt parsing requested json
 					try {
 						var parsed = JSON.parse(current_page_request.responseText);
-						current_page = target_page;
-						generatePage(parsed);
+
+						// Update URL if required
+						var new_url = `${window.location.pathname}?page=${game}${hash || ""}`;
+						var current_url = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+						if (new_url !== current_url) history.pushState(null, "", new_url);
+
+						// Hide previous page if required
+						if (current_page) {
+							if (current_page.id !== "page_custom") {
+								current_page.classList.add("page_hidden");
+								current_page = document.getElementById("page_custom");
+								current_page.classList.remove("page_hidden");
+							}
+						} else {
+							current_page = document.getElementById("page_custom");
+							current_page.classList.remove("page_hidden");
+						}
+
+						// Generate HTML code with parsed json results
+						generatePage(parsed, hash);
 					} catch {
-						// Todo: Show error notification (JSON file with wrong format?)
+
+						// Hide previous page if required
+						if (current_page) {
+							if (current_page.id !== "page_error") {
+								current_page.classList.add("page_hidden");
+								current_page = document.getElementById("page_error");
+								current_page.classList.remove("page_hidden");
+							}
+						} else {
+							current_page = document.getElementById("page_error");
+							current_page.classList.remove("page_hidden");
+						}
+
+						// Add error text to error page
+						current_page.innerText = `Something went wrong - Error when attempting to parse the fetched JSON file.`;
 					}
+
 					current_page_request = undefined;
 				} else {
-					// Todo: Show error notification (Request failed - Maybe a list of common statuses and solutions?)
+
+					// Hide previous page if required
+					if (current_page) {
+						if (current_page.id !== "page_error") {
+							current_page.classList.add("page_hidden");
+							current_page = document.getElementById("page_error");
+							current_page.classList.remove("page_hidden");
+						}
+					} else {
+						current_page = document.getElementById("page_error");
+						current_page.classList.remove("page_hidden");
+					}
+
+					// Add error text to error page
+					current_page.innerText = `Something went wrong - Error code: ${status}`;
+
 					current_page_request = undefined;
 				}
 			}
@@ -147,6 +203,46 @@ function loadPageJson(page) { // Loading specified page
 		// Sending the request
 		current_page_request.send();
 	}
+}
+
+function setupContent() { // Called only on startup, checking search params and hash
+
+	// Variables
+	var url_search = new URLSearchParams(window.location.search).get("page");
+	var url_search_element = document.querySelector(`div#page_${url_search}`);
+	var url_hash = (window.location.hash === "") ? undefined : window.location.hash;
+
+	// No search specified, use main page
+	if (!url_search) url_search_element = document.getElementById("page_main");
+
+	// Via search params specified page is an element: Show it
+	if (url_search_element) {
+		url_search_element.classList.remove("page_hidden");
+		current_page = url_search_element;
+
+	// No element found but page was specified, fetch json file
+	} else if (url_search) {
+		loadGameJson(url_search, url_hash);
+	}
+}
+
+function switchPages(event) { // Switching pages
+
+	// Variables
+	var target_page_id = event.currentTarget.getAttribute("target_page");
+	var target_page = document.getElementById(target_page_id);
+
+	// Hide current page if required
+	if (current_page.id !== target_page_id) {
+		current_page.classList.add("page_hidden");
+		current_page = target_page;
+		current_page.classList.remove("page_hidden");
+	}
+
+	// Update search params and remove hash
+	var search_params = (target_page_id === "page_main") ? "" : `?page=${target_page_id.slice(5)}`;
+	var new_url = `${window.location.pathname}${search_params}`;
+	history.pushState(null, "", new_url);
 }
 // #endregion
 
@@ -159,10 +255,10 @@ window.addEventListener("DOMContentLoaded", () => { // On page load
 	// Set website theme: Local storage > Preferred via OS > Use default (dark)
 	setPreferredUserTheme(true);
 
-	// Get and load target page if specified
-	loadPageJson();
+	// Showing requested content
+	setupContent();
 
-	// Glow effect around elements
+	// Glow effect on mouse move around specified elements
 	document.documentElement.addEventListener("mousemove", (e) => {
 		var elems = document.querySelectorAll(".proximity_glow_effect");
 		for (i = 0; i < elems.length; i++) {
@@ -177,12 +273,13 @@ window.addEventListener("DOMContentLoaded", () => { // On page load
 	// Clicking or tapping navbar toggle button
 	navbar_toggle_btn.addEventListener("click", toggleNavbarVisibility);
 
-	// Clicking logos to go home
-	for (i = 0; i < logos.length; i++) logos[i].addEventListener("click", loadPageJson("main_page"));
+	// Clicking or tapping logos to go home
+	for (i = 0; i < logos.length; i++) logos[i].addEventListener("click", switchPages);
 
-	// Temporary mockup
-	test_button.addEventListener("click", () => {
-		loadPageJson("grand-theft-auto-v");
-	});
+	// Navbar buttons
+	for (i = 0; i < navbar_buttons.length; i++) navbar_buttons[i].addEventListener("click", switchPages);
+
+	// Set the feeds' content
+	document.getElementById("feed_container").innerHTML = document.getElementById("page_feed").innerHTML;
 });
 // #endregion
