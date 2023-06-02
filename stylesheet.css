@@ -1,6 +1,6 @@
 /* ---------- Full page styling ---------- */
 /* #region */
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap");
 
 * {
 	font-family: "Montserrat", Verdana, Geneva, Tahoma, sans-serif;
@@ -20,12 +20,12 @@
 	--margin_l: calc(2vmin * (var(--scale_mult) + var(--custom_scale_mult)));
 	--border_thickness: calc(0.33vmin * (var(--scale_mult) + var(--custom_scale_mult)));
 
-	/* Text sizes, large to small */
-	--text_size_0: calc(1.9vw * (var(--scale_mult) + var(--custom_scale_mult)));
-	--text_size_1: calc(1.6vw * (var(--scale_mult) + var(--custom_scale_mult)));
-	--text_size_2: calc(1.2vw * (var(--scale_mult) + var(--custom_scale_mult)));
-	--text_size_3: calc(0.9vw * (var(--scale_mult) + var(--custom_scale_mult)));
-	--text_size_4: calc(0.7vw * (var(--scale_mult) + var(--custom_scale_mult)));
+	/* Text related */
+	--text_size_0: calc(1.90vw * (var(--scale_mult) + var(--custom_scale_mult)));
+	--text_size_1: calc(1.60vw * (var(--scale_mult) + var(--custom_scale_mult)));
+	--text_size_2: calc(1.15vw * (var(--scale_mult) + var(--custom_scale_mult)));
+	--text_size_3: calc(0.90vw * (var(--scale_mult) + var(--custom_scale_mult)));
+	--text_size_4: calc(0.70vw * (var(--scale_mult) + var(--custom_scale_mult)));
 }
 
 :root[data-theme="light"] {
@@ -83,7 +83,13 @@ hr {
 
 @media (pointer: fine) {
 	.proximity_glow_effect {
-		background-image: radial-gradient(circle at var(--x) var(--y), var(--background_elevation_9), var(--background_elevation_4) 20vw);
+
+		/* Radis change requires update in `updateGlowEffect` */
+		background-image: radial-gradient(
+			circle at var(--x) var(--y),
+			var(--background_elevation_9),
+			var(--background_elevation_4) 15vw
+		);
 	}
 }
 
@@ -151,7 +157,7 @@ hr {
 
 .navbar_item_container {
 	padding: var(--border_thickness);
-	margin-top: var(--margin_m);
+	margin: var(--margin_m) var(--margin_m) 0 0;
 	cursor: pointer;
 	user-select: none;
 }
@@ -231,6 +237,44 @@ hr {
 
 .page_hidden {
 	display: none;
+}
+
+.textblock {
+	margin: var(--margin_m);
+}
+
+.textblock > h1 {
+	font-size: var(--text_size_0);
+	font-weight: 700;
+}
+
+.textblock > * {
+	font-size: var(--text_size_2);
+}
+
+#game_searchbox {
+	display: block;
+	background-color: var(--background_elevation_6);
+	border: var(--border_thickness) solid var(--text_disabled);
+	margin: 0 auto;
+	width: 75%;
+	height: 2em;
+	text-align: center;
+}
+
+#game_searchbox:focus {
+	outline: none;
+}
+
+#games_list_container {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+#games_list_container > div {
+	margin: var(--margin_m);
+	padding: var(--margin_m);
+	flex-grow: 1;
 }
 /* #endregion */
 
