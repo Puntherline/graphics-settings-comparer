@@ -4,6 +4,9 @@ var navbar_container = document.getElementById("navbar_container");
 var navbar_toggle_btn = document.querySelector(".portrait_navbar_toggle");
 var logos = document.getElementsByClassName("logo");
 var navbar_buttons = document.querySelectorAll(".navbar_item_container");
+var game_searchbox = document.getElementById("game_searchbox");
+var navbar_glow_effects = document.querySelectorAll("div.navbar_item_container.proximity_glow_effect");
+var games_glow_effects = document.querySelectorAll("div#games_list_container > div.proximity_glow_effect");
 // #endregion
 
 
@@ -11,22 +14,28 @@ var navbar_buttons = document.querySelectorAll(".navbar_item_container");
 // ---------- Variables ----------
 // #region
 var current_theme = "dark";
-
 var current_page_request;
 var current_page;
-
-var navbar_visible = false;
 var cached_games = {};
+var visibility_toggle_timeout;
+var screen_dimensions;
 // #endregion
 
 
 
 // ---------- Functions ----------
 // #region
-function toggleNavbarVisibility() { // Toggle navbar visible or hidden
+function toggleNavbarVisibility(show) { // Toggle navbar visible or hidden
 	navbar_container.style.transition = "transform .5s";
-	navbar_container.classList.toggle("show_navbar_portrait");
-	setTimeout(function() {
+	if (show === true) {
+		navbar_container.classList.add("show_navbar_portrait");
+	} else if (show === false) {
+		navbar_container.classList.remove("show_navbar_portrait");
+	} else {
+		navbar_container.classList.toggle("show_navbar_portrait");
+	}
+	clearTimeout(visibility_toggle_timeout);
+	visibility_toggle_timeout = setTimeout(function() {
 		navbar_container.removeAttribute("style");
 	}, 600);
 }
@@ -232,6 +241,18 @@ function switchPages(event) { // Switching pages
 	var target_page_id = event.currentTarget.getAttribute("target_page");
 	var target_page = document.getElementById(target_page_id);
 
+	// Item in navbar was clicked, hide navbar if visible in portrait
+	if (
+		(
+			event.currentTarget.classList.contains("navbar_item_container") ||
+			event.currentTarget.classList.contains("navbar_top")
+		) && (
+			document.getElementById("navbar_container").classList.contains("show_navbar_portrait")
+		)
+	) {
+		toggleNavbarVisibility(false);
+	}
+
 	// Hide current page if required
 	if (current_page.id !== target_page_id) {
 		current_page.classList.add("page_hidden");
@@ -243,6 +264,98 @@ function switchPages(event) { // Switching pages
 	var search_params = (target_page_id === "page_main") ? "" : `?page=${target_page_id.slice(5)}`;
 	var new_url = `${window.location.pathname}${search_params}`;
 	history.pushState(null, "", new_url);
+}
+
+function searchGamesList(event) { // Searching the games list for what the user entered
+	console.log(event.currentTarget.value);
+}
+
+// var ran = false;
+function updateGlowEffect(event) { // Updating the glow effect of all specified elements
+
+	// There's a clever way to go about this, I'm sure of it.
+	// I just haven't found it yet.
+
+/*
+	// Todo:
+	// - Make some of these variables globally scoped
+	// - Update on browser resize
+	var viewport_width = window.screen.width;
+	var viewport_height = window.screen.height;
+	var glow_radius = 0.15;
+	var glow_radius_x = viewport_width * glow_radius;
+	var glow_radius_y = viewport_height * glow_radius;
+
+	// Iterate all navbar buttons
+	for (i = 0; i < navbar_glow_effects.length; i++) {
+
+		// Get top/bottom/left/right of element
+		var element_rect = navbar_glow_effects[i].getBoundingClientRect();
+
+		// If element is not out of bounds
+		if (
+			element_rect.top < viewport_height &&
+			element_rect.bottom > 0 &&
+			element_rect.left < viewport_width &&
+			element_rect.right > 0
+		) {
+
+			// If glow effect is within radius
+			if (
+				event.clientX > element_rect.left - glow_radius_x &&
+				event.clientX < element_rect.right + glow_radius_x &&
+				event.clientY > element_rect.top - glow_radius_y &&
+				event.clientY < element_rect.bottom - glow_radius_y
+			) {
+
+				// Calculate x and y
+				var new_x = event.clientX - element_rect.left;
+				var new_y = event.clientY - element_rect.top;
+
+				// Set property
+				navbar_glow_effects[i].style.setProperty("--x", new_x + "px");
+				navbar_glow_effects[i].style.setProperty("--y", new_y + "px");
+			}
+		} else {
+			console.log(navbar_glow_effects[i]);
+		}
+	}
+
+	// if (ran) return;
+
+	// Iterate all elements
+	// for (i = 0; i < glow_effect_elements.length; i++) {
+
+		// Todo:
+		// - If top and bottom are out of vertical viewport, skip
+		// - If left and right are out of horizontal viewport, skip
+		// - Don't automatically get all glow effect elements:
+			// - Get navbar elements and game elements separately
+			// - If current page is not games page, don't even iterate games
+			// - Do the same for other pages too
+	// }
+	// ran = true;
+
+	// for (i = 0; i < glow_effect_elements.length; i++) {
+	// 	var rect = glow_effect_elements[i].getBoundingClientRect();
+	// 	var x = event.clientX - rect.left;
+	// 	var y = event.clientY - rect.top;
+	// 	glow_effect_elements[i].style.setProperty("--x", x + "px");
+	// 	glow_effect_elements[i].style.setProperty("--y", y + "px");
+	// }
+
+	// Get the elements' bounding rectangle (top, bottom, left, right)
+	// var rect = glow_effect_elements[0].getBoundingClientRect();
+
+	// Check if the new x and y are both within range
+
+	// Get new X and Y for element
+	// var new_x = event.clientX - rect.left;
+	// var new_y = event.clientY - rect.top;
+
+	// TEMP
+	// console.log(`Rect x(${rect.left}) y(${rect.top})\nCursor x(${event.clientX}) y(${event.clientY})`);
+*/
 }
 // #endregion
 
@@ -259,7 +372,12 @@ window.addEventListener("DOMContentLoaded", () => { // On page load
 	setupContent();
 
 	// Glow effect on mouse move around specified elements
-	document.documentElement.addEventListener("mousemove", (e) => {
+	// glow_effect_elements = document.getElementsByClassName("proximity_glow_effect");
+	// screen_dimensions = {x: window.screen.width, y: window.screen.height};
+	// document.documentElement.addEventListener("mousemove", updateGlowEffect);
+
+	// Glow effect on mouse move around specified elements
+	/*document.documentElement.addEventListener("mousemove", (e) => {
 		var elems = document.querySelectorAll(".proximity_glow_effect");
 		for (i = 0; i < elems.length; i++) {
 			var rect = elems[i].getBoundingClientRect();
@@ -268,7 +386,7 @@ window.addEventListener("DOMContentLoaded", () => { // On page load
 			elems[i].style.setProperty("--x", x + "px");
 			elems[i].style.setProperty("--y", y + "px");
 		}
-	});
+	});*/
 
 	// Clicking or tapping navbar toggle button
 	navbar_toggle_btn.addEventListener("click", toggleNavbarVisibility);
@@ -281,5 +399,8 @@ window.addEventListener("DOMContentLoaded", () => { // On page load
 
 	// Set the feeds' content
 	document.getElementById("feed_container").innerHTML = document.getElementById("page_feed").innerHTML;
+
+	// Typing into the searchbox for the games
+	game_searchbox.addEventListener("input", searchGamesList);
 });
 // #endregion
