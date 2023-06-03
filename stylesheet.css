@@ -7,6 +7,7 @@
 	color: var(--text_primary);
 	scroll-behavior: smooth;
 	font-weight: 500;
+	line-height: 1.6em;
 }
 
 :root {
@@ -75,6 +76,7 @@ body {
 hr {
 	border: calc(var(--border_thickness) / 2) solid var(--text_disabled);
 	width: 99%;
+	margin: var(--margin_m) 0;
 }
 
 .proximity_glow_effect {
@@ -152,7 +154,7 @@ hr {
 
 #navbar_center {
 	height: 100%;
-	overflow: hidden scroll;
+	overflow: hidden auto;
 }
 
 .navbar_item_container {
@@ -240,7 +242,7 @@ hr {
 }
 
 .textblock {
-	margin: var(--margin_m);
+	margin: var(--margin_l);
 }
 
 .textblock > h1 {
