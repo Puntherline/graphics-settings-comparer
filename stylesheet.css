@@ -74,8 +74,10 @@ body {
 }
 
 hr {
-	border: calc(var(--border_thickness) / 2) solid var(--text_disabled);
-	width: 99%;
+	border-width: var(--border_thickness) 0 0 0;
+	border-style: solid none none none;
+	border-color: var(--text_disabled);
+	width: 100%;
 	margin: var(--margin_m) 0;
 }
 
@@ -86,11 +88,11 @@ hr {
 @media (pointer: fine) {
 	.proximity_glow_effect {
 
-		/* Radis change requires update in `updateGlowEffect` */
+		/* Requires variable glow_radius to be changed in JS */
 		background-image: radial-gradient(
 			circle at var(--x) var(--y),
 			var(--background_elevation_9),
-			var(--background_elevation_4) 15vw
+			var(--background_elevation_4) 30vw
 		);
 	}
 }
@@ -159,7 +161,7 @@ hr {
 
 .navbar_item_container {
 	padding: var(--border_thickness);
-	margin: var(--margin_m) var(--margin_m) 0 0;
+	margin: var(--margin_m) 0 0 0;
 	cursor: pointer;
 	user-select: none;
 }
@@ -258,10 +260,10 @@ hr {
 	display: block;
 	background-color: var(--background_elevation_6);
 	border: var(--border_thickness) solid var(--text_disabled);
-	margin: 0 auto;
-	width: 75%;
+	width: calc(100% - var(--margin_m));
 	height: 2em;
 	text-align: center;
+	margin: var(--margin_l) 0;
 }
 
 #game_searchbox:focus {
@@ -271,12 +273,45 @@ hr {
 #games_list_container {
 	display: flex;
 	flex-wrap: wrap;
+
+	/* Because focussing the last flex-wrapped div in a row */
+	/* is probably not possible, use a negative margin. */
+	margin-right: calc(var(--margin_m) * -1);
 }
 
-#games_list_container > div {
-	margin: var(--margin_m);
-	padding: var(--margin_m);
+.game_button_container {
+	margin: var(--margin_m) var(--margin_m) 0 0;
+	padding: var(--border_thickness);
 	flex-grow: 1;
+	cursor: pointer;
+	user-select: none;
+}
+
+.game_hidden {
+	display: none;
+}
+
+.games_list_item {
+	display: flex;
+	flex-direction: row;
+	background-color: var(--background_elevation_1);
+	transition: opacity .1s;
+}
+
+.proximity_glow_effect:hover .games_list_item {
+	opacity: 0.8;
+	transition: opacity .1s;
+}
+
+.games_list_icon {
+	width: 4em;
+	height: 4em;
+	padding: var(--margin_s);
+}
+
+.games_list_item_text {
+	font-size: var(--text_size_2);
+	margin: auto 0 auto var(--margin_s);
 }
 /* #endregion */
 
