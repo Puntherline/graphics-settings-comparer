@@ -6,19 +6,50 @@ var logos = document.getElementsByClassName("logo");
 var navbar_buttons = document.querySelectorAll(".navbar_item_container");
 var game_searchbox = document.getElementById("game_searchbox");
 var navbar_glow_effects = document.querySelectorAll("div.navbar_item_container.proximity_glow_effect");
-var games_glow_effects = document.querySelectorAll("div#games_list_container > div.proximity_glow_effect");
+var games_glow_effects;
+var games_list_container = document.getElementById("games_list_container");
 // #endregion
 
 
 
 // ---------- Variables ----------
 // #region
+// Editable
+var glow_update_fps = 30;
+var glow_update_ms = 1000 / glow_update_fps;
+var glow_radius = window.screen.width * 0.3; // Requires change in .proximity_glow_effect CSS
+var games_list = { // Just example games for now
+	["cities-skylines"]: "Cities Skylines",
+	["crysis"]: "Crysis",
+	["crysis-2"]: "Crysis 2",
+	["crysis-3"]: "Crysis 3",
+	["cyberpunk-2077"]: "Cyberpunk 2077",
+	["fallout-4"]: "Fallout 4",
+	["forza-horizon-5"]: "Forza Horizon 5",
+	["frostpunk"]: "Frostpunk",
+	["grand-theft-auto-v"]: "Grand Theft Auto V",
+	["just-cause-3"]: "Just Cause 3",
+	["kerbal-space-program"]: "Kerbal Space Program",
+	["kingdom-come-deliverance"]: "Kingdom Come: Deliverance",
+	["mad-max"]: "Mad Max",
+	["microsoft-flight-simulator-2020"]: "Microsoft Flight Simulator 2020",
+	["satisfactory"]: "Satisfactory",
+	["watch-dogs-2"]: "Watch_Dogs 2",
+	["wreckfest"]: "Wreckfest"
+};
+
+// Non-editable
 var current_theme = "dark";
 var current_page_request;
 var current_page;
 var cached_games = {};
 var visibility_toggle_timeout;
 var screen_dimensions;
+var last_mouse_move = Date.now();
+var glow_applied_navbtns = [];
+var glow_applied_gamebtns = [];
+var games_list_processed = "";
+var games_list_set = false;
 // #endregion
 
 
@@ -214,6 +245,28 @@ function loadGameJson(game, hash) { // Loading from cache or json file
 	}
 }
 
+function setGamesListContent() { // Generating and setting games list content
+	if (games_list_set) return;
+
+	if (games_list_processed === "") {
+		for (const [k, v] of Object.entries(games_list)) {
+			games_list_processed = `
+				${games_list_processed}
+				<div target_page="page_${k}" class="proximity_glow_effect game_button_container">
+					<div class="games_list_item">
+						<img class="games_list_icon" src="/graphics-settings-comparer/games/${k}/icon.png">
+						<p class="games_list_item_text">${v}</p>
+					</div>
+				</div>
+			`;
+		}
+	}
+	games_list_container.innerHTML = games_list_processed;
+	games_list_set = true;
+	games_glow_effects = document.querySelectorAll("div#games_list_container > div.proximity_glow_effect");
+
+}
+
 function setupContent() { // Called only on startup, checking search params and hash
 
 	// Variables
@@ -226,6 +279,7 @@ function setupContent() { // Called only on startup, checking search params and 
 
 	// Via search params specified page is an element: Show it
 	if (url_search_element) {
+		if (url_search_element.id === "page_games") setGamesListContent();
 		url_search_element.classList.remove("page_hidden");
 		current_page = url_search_element;
 
@@ -253,8 +307,13 @@ function switchPages(event) { // Switching pages
 		toggleNavbarVisibility(false);
 	}
 
-	// Hide current page if required
+	// Switch pages (if required)
 	if (current_page.id !== target_page_id) {
+
+		// Switched to games list: Set inner HTML for it
+		if (target_page_id === "page_games") setGamesListContent();
+
+		// Set old page hidden and new page visible
 		current_page.classList.add("page_hidden");
 		current_page = target_page;
 		current_page.classList.remove("page_hidden");
@@ -267,95 +326,104 @@ function switchPages(event) { // Switching pages
 }
 
 function searchGamesList(event) { // Searching the games list for what the user entered
-	console.log(event.currentTarget.value);
+
+	// Get search argument
+	var search = event.currentTarget.value.toLowerCase();
+
+	// Search empty - Show all game buttons
+	if (search === "") {
+		var hidden_games = document.querySelectorAll("div#games_list_container > div.game_hidden");
+		for (i = 0; i < hidden_games.length; i++) hidden_games[i].classList.remove("game_hidden");
+	}
+
+	// Iterate games list
+	for (const [game_id, game_label] of Object.entries(games_list)) {
+		var game_button = document.querySelector(`div[target_page="page_${game_id}"]`);
+		if (game_label.toLowerCase().indexOf(search) === -1) {
+			if (!game_button.classList.contains("game_hidden")) game_button.classList.add("game_hidden");
+		} else {
+			if (game_button.classList.contains("game_hidden")) game_button.classList.remove("game_hidden");
+		}
+	}
 }
 
-// var ran = false;
-function updateGlowEffect(event) { // Updating the glow effect of all specified elements
+function updateGlowEffect(event) { // Checking if the glow effect needs updating
 
-	// There's a clever way to go about this, I'm sure of it.
-	// I just haven't found it yet.
+	// Don't update if last update isn't long enough ago
+	var current_mouse_move = Date.now();
+	if (current_mouse_move - last_mouse_move < glow_update_ms) return;
 
-/*
-	// Todo:
-	// - Make some of these variables globally scoped
-	// - Update on browser resize
-	var viewport_width = window.screen.width;
-	var viewport_height = window.screen.height;
-	var glow_radius = 0.15;
-	var glow_radius_x = viewport_width * glow_radius;
-	var glow_radius_y = viewport_height * glow_radius;
+	// Get mouse position
+	var mouse_x = event.clientX;
+	var mouse_y = event.clientY;
 
-	// Iterate all navbar buttons
-	for (i = 0; i < navbar_glow_effects.length; i++) {
+	// Navbar (if visible)
+	var nav_rect = navbar_container.getBoundingClientRect();
+	if (nav_rect.right > 0) {
 
-		// Get top/bottom/left/right of element
-		var element_rect = navbar_glow_effects[i].getBoundingClientRect();
+		// Iterate all navbar buttons
+		for (i = 0; i < navbar_buttons.length; i++) {
+			var rect = navbar_buttons[i].getBoundingClientRect();
 
-		// If element is not out of bounds
-		if (
-			element_rect.top < viewport_height &&
-			element_rect.bottom > 0 &&
-			element_rect.left < viewport_width &&
-			element_rect.right > 0
-		) {
-
-			// If glow effect is within radius
+			// If cursor is in range of current button
 			if (
-				event.clientX > element_rect.left - glow_radius_x &&
-				event.clientX < element_rect.right + glow_radius_x &&
-				event.clientY > element_rect.top - glow_radius_y &&
-				event.clientY < element_rect.bottom - glow_radius_y
+				mouse_x > rect.left - glow_radius && // Not too far left
+				mouse_x < rect.right + glow_radius && // Not too far right
+				mouse_y > rect.top - glow_radius && // Not too far up
+				mouse_y < rect.bottom + glow_radius // Not too far down
 			) {
+				var x = mouse_x - rect.left;
+				var y = mouse_y - rect.top;
+				navbar_buttons[i].style.setProperty("--x", x + "px");
+				navbar_buttons[i].style.setProperty("--y", y + "px");
+				if (!glow_applied_navbtns.includes(i)) glow_applied_navbtns.push(i);
 
-				// Calculate x and y
-				var new_x = event.clientX - element_rect.left;
-				var new_y = event.clientY - element_rect.top;
-
-				// Set property
-				navbar_glow_effects[i].style.setProperty("--x", new_x + "px");
-				navbar_glow_effects[i].style.setProperty("--y", new_y + "px");
+			// Cursor isn't in range, clean up if required
+			} else {
+				var index = glow_applied_navbtns.indexOf(i);
+				if (index !== -1) {
+					navbar_buttons[i].style.removeProperty("--x");
+					navbar_buttons[i].style.removeProperty("--y");
+					glow_applied_navbtns.splice(index, 1);
+				}
 			}
-		} else {
-			console.log(navbar_glow_effects[i]);
 		}
 	}
 
-	// if (ran) return;
+	// Games list
+	if (current_page.id === "page_games") {
 
-	// Iterate all elements
-	// for (i = 0; i < glow_effect_elements.length; i++) {
+		// Iterate all game buttons
+		for (i = 0; i < games_glow_effects.length; i++) {
+			var rect = games_glow_effects[i].getBoundingClientRect();
 
-		// Todo:
-		// - If top and bottom are out of vertical viewport, skip
-		// - If left and right are out of horizontal viewport, skip
-		// - Don't automatically get all glow effect elements:
-			// - Get navbar elements and game elements separately
-			// - If current page is not games page, don't even iterate games
-			// - Do the same for other pages too
-	// }
-	// ran = true;
+			// If cursor is in range of current button
+			if (
+				mouse_x > rect.left - glow_radius && // Not too far left
+				mouse_x < rect.right + glow_radius && // Not too far right
+				mouse_y > rect.top - glow_radius && // Not too far up
+				mouse_y < rect.bottom + glow_radius // Not too far down
+			) {
+				var x = mouse_x - rect.left;
+				var y = mouse_y - rect.top;
+				games_glow_effects[i].style.setProperty("--x", x + "px");
+				games_glow_effects[i].style.setProperty("--y", y + "px");
+				if (!glow_applied_gamebtns.includes(i)) glow_applied_gamebtns.push(i);
 
-	// for (i = 0; i < glow_effect_elements.length; i++) {
-	// 	var rect = glow_effect_elements[i].getBoundingClientRect();
-	// 	var x = event.clientX - rect.left;
-	// 	var y = event.clientY - rect.top;
-	// 	glow_effect_elements[i].style.setProperty("--x", x + "px");
-	// 	glow_effect_elements[i].style.setProperty("--y", y + "px");
-	// }
+			// Cursor isn't in range, clean up if required
+			} else {
+				var index = glow_applied_gamebtns.indexOf(i);
+				if (index !== -1) {
+					games_glow_effects[i].style.removeProperty("--x");
+					games_glow_effects[i].style.removeProperty("--y");
+					glow_applied_gamebtns.splice(index, 1);
+				}
+			}
+		}
+	}
 
-	// Get the elements' bounding rectangle (top, bottom, left, right)
-	// var rect = glow_effect_elements[0].getBoundingClientRect();
-
-	// Check if the new x and y are both within range
-
-	// Get new X and Y for element
-	// var new_x = event.clientX - rect.left;
-	// var new_y = event.clientY - rect.top;
-
-	// TEMP
-	// console.log(`Rect x(${rect.left}) y(${rect.top})\nCursor x(${event.clientX}) y(${event.clientY})`);
-*/
+	// Update last mouse move time
+	last_mouse_move = current_mouse_move;
 }
 // #endregion
 
@@ -371,22 +439,8 @@ window.addEventListener("DOMContentLoaded", () => { // On page load
 	// Showing requested content
 	setupContent();
 
-	// Glow effect on mouse move around specified elements
-	// glow_effect_elements = document.getElementsByClassName("proximity_glow_effect");
-	// screen_dimensions = {x: window.screen.width, y: window.screen.height};
-	// document.documentElement.addEventListener("mousemove", updateGlowEffect);
-
-	// Glow effect on mouse move around specified elements
-	/*document.documentElement.addEventListener("mousemove", (e) => {
-		var elems = document.querySelectorAll(".proximity_glow_effect");
-		for (i = 0; i < elems.length; i++) {
-			var rect = elems[i].getBoundingClientRect();
-			var x = e.clientX - rect.left;
-			var y = e.clientY - rect.top;
-			elems[i].style.setProperty("--x", x + "px");
-			elems[i].style.setProperty("--y", y + "px");
-		}
-	});*/
+	// Glow effect on mouse move
+	window.addEventListener("mousemove", updateGlowEffect);
 
 	// Clicking or tapping navbar toggle button
 	navbar_toggle_btn.addEventListener("click", toggleNavbarVisibility);
